@@ -32,6 +32,10 @@ namespace Assign2
         SoundEffect soundEffect;//initialize soundEffect of type SoundEfect
         SoundEffectInstance soundEffectInstance;//initialize soundEffectInstance of type SoundEfectIntance
 
+        Scrolling scrolling1;
+        Scrolling scrolling2;
+        Scrolling scrolling3;
+
         private List<GameEntity> entities = new List<GameEntity>();//new list of type GameEntity called entities
 
         public List<GameEntity> Entities
@@ -86,6 +90,10 @@ namespace Assign2
             title = Content.Load<SpriteFont>("Title");//font named title created
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            scrolling1 = new Scrolling(Content.Load<Texture2D>("Backgrounds/scroll1"), new Rectangle(0, 0, 800, 500));
+            scrolling2 = new Scrolling(Content.Load<Texture2D>("Backgrounds/scroll2"), new Rectangle(800, 0, 800, 500));
+            scrolling3 = new Scrolling(Content.Load<Texture2D>("Backgrounds/scroll3"), new Rectangle(1600, 0, 800, 500));
+
             for (int i = 0; i < entities.Count; i++)
             {
                 entities[i].LoadContent();//calls LoadContent from entities[i]
@@ -126,6 +134,7 @@ namespace Assign2
         {
 
             KeyboardState state = Keyboard.GetState();
+
             if (state.IsKeyDown(Keys.Escape))//if escape key is pressed 
             {
                 Exit();//exit program
@@ -192,6 +201,19 @@ namespace Assign2
 
                 }
             }
+
+            // Scrolling Backgrounds
+            if (scrolling1.rectangle.X + scrolling1.texture.Width <= 0)
+                scrolling1.rectangle.X = scrolling2.rectangle.X + scrolling2.texture.Width;
+            if (scrolling2.rectangle.X + scrolling2.texture.Width <= 0)
+                scrolling2.rectangle.X = scrolling3.rectangle.X + scrolling3.texture.Width;
+            if (scrolling3.rectangle.X + scrolling3.texture.Width <= 0)
+                scrolling3.rectangle.X = scrolling1.rectangle.X + scrolling1.texture.Width;
+
+            scrolling1.Update();
+            scrolling2.Update();
+            scrolling3.Update();
+
             base.Update(gameTime);
 
         }
@@ -212,6 +234,9 @@ namespace Assign2
             if (gameState == GameState.Game)//if gamestate equals game
             {
                 spriteBatch.Begin();
+                scrolling1.Draw(spriteBatch);
+                scrolling2.Draw(spriteBatch);
+                scrolling3.Draw(spriteBatch);
 
                 //FIRE LEVEL
                 if (score > 100)//if score greater than 100
